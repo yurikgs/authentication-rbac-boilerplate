@@ -47,16 +47,7 @@ export class UserController {
   }
   @Delete(':id')
   async delete(
-    @Param(
-      'id',
-      new ParseIntPipe({
-        errorHttpStatusCode: 404,
-        exceptionFactory() {
-          Logger.error('id inválido', 'UserSevice');
-          throw new BadRequestException('id inválido');
-        },
-      }),
-    )
+    @Param('id', ParseIntPipe)
     id: number,
   ) {
     return this.userService.destroy(id);

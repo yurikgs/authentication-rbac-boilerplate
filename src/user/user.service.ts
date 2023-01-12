@@ -47,10 +47,13 @@ export class UserService {
     });
   }
   async destroy(id: number) {
-    return this.dbService.user.delete({
+    await this.dbService.user.delete({
       where: {
         id,
       },
     });
+    return {
+      message: `User ${id} deleted with success`,
+    };
   }
 }
