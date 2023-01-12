@@ -20,14 +20,17 @@ export class UserService {
     return this.dbService.user.findMany();
   }
   async show(id: number) {
-    const user = await this.findById(id);
+    const user = await this.dbService.user.findUnique({
+      where: {
+        id,
+      },
+    });
     return isThere(user, 'UserService');
   }
 
   async updatePut(id: number, data: UpdatePutUserDTO) {
     data.birthAt ? (data.birthAt = new Date(data.birthAt)) : null;
-    const user = await this.findById(id);
-    if (user) {
+    if (await this.VerifyUser(id)) {
       return this.dbService.user.update({
         data,
         where: {
@@ -35,13 +38,12 @@ export class UserService {
         },
       });
     } else {
-      return isThere(user, 'UserService');
+      return isThere(false, 'UserService');
     }
   }
   async updatePatch(id: number, data: UpdatePatchUserDTO) {
     data.birthAt ? (data.birthAt = new Date(data.birthAt)) : null;
-    const user = await this.findById(id);
-    if (user) {
+    if (await this.VerifyUser(id)) {
       return this.dbService.user.update({
         data,
         where: {
@@ -49,12 +51,11 @@ export class UserService {
         },
       });
     } else {
-      return isThere(user, 'UserService');
+      return isThere(false, 'UserService');
     }
   }
   async destroy(id: number) {
-    const user = await this.findById(id);
-    if (user) {
+    if (await this.VerifyUser(id)) {
       await this.dbService.user.delete({
         where: {
           id,
@@ -64,13 +65,13 @@ export class UserService {
         message: `User ${id} deleted with success`,
       };
     } else {
-      return isThere(user, 'UserService');
+      return isThere(false, 'UserService');
     }
   }
 
   //   aux
-  async findById(id: number) {
-    return await this.dbService.user.findUnique({
+  async VerifyUser(id: number): Promise<number> {
+    return await this.dbService.user.count({
       where: {
         id,
       },
