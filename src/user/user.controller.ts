@@ -12,6 +12,7 @@ import {
   BadRequestException,
   Logger,
 } from '@nestjs/common';
+import { ParamId } from '../decorators/param-id.decorator';
 import { LogInterceptor } from 'src/interceptors/log.interceptor';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePatchUserDTO } from './dto/update-patch-user.dto';
@@ -32,7 +33,7 @@ export class UserController {
   }
   // @UseInterceptors(LogInterceptor)
   @Get(':id')
-  async show(@Param('id', ParseIntPipe) id: number) {
+  async show(@ParamId() id: number) {
     return this.userService.show(id);
   }
   @Put(':id')
