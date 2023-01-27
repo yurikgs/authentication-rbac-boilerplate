@@ -17,10 +17,9 @@ export class CreateUserDTO {
   @IsEmail()
   email: string;
 
-  @IsString()
   @MinLength(6)
-  @MaxLength(40)
-  //   @IsAlphanumeric()
+  @MaxLength(32)
+  @IsAlphanumeric()
   password: string;
 
   @IsOptional()

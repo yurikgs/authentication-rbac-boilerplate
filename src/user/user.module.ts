@@ -9,6 +9,7 @@ import { UserService } from './user.service';
   controllers: [UserController],
   providers: [UserService],
   imports: [PrismaModule],
+  exports: [UserService],
 })
 export class UserModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
