@@ -1,21 +1,54 @@
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
+import {
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt';
+import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserService } from 'src/user/user.service';
+import { AuthRegisterDTO } from './dto/auth-register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly dbService: PrismaService,
+    private readonly userService: UserService,
   ) {}
 
-  generateToken(payload: string) {
-    this.jwtService.sign(payload);
+  generateToken(user: User) {
+    return {
+      apiToken: this.jwtService.sign(
+        {
+          sub: user.id,
+          name: user.name,
+          email: user.email,
+        },
+        {
+          expiresIn: '7 days',
+          issuer: 'login',
+          audience: 'users',
+        },
+      ),
+    };
   }
 
   checkToken(token: string) {
-    this.jwtService.verify(token);
+    try {
+      const data = this.jwtService.verify(token, {
+        audience: 'users',
+        issuer: 'login',
+      });
+      return Boolean(data);
+    } catch (e) {
+      throw new BadRequestException('Token Inválido');
+    }
+  }
+  async register(data: AuthRegisterDTO) {
+    const user = await this.userService.store(data);
+
+    return this.generateToken(user);
   }
 
   async login(email: string, password: string) {
@@ -30,7 +63,7 @@ export class AuthService {
       throw new UnauthorizedException(`O email ou a senha estão incorretos`);
     }
 
-    return user;
+    return this.generateToken(user);
   }
 
   async forget(email) {
@@ -54,7 +87,7 @@ export class AuthService {
 
     // mock de extração de id proveniente do token:
     const id = 8;
-    await this.dbService.user.update({
+    const user = await this.dbService.user.update({
       where: {
         id,
       },
@@ -63,6 +96,6 @@ export class AuthService {
       },
     });
 
-    return `Senha atualizada com sucesso`;
+    return this.generateToken(user);
   }
 }
