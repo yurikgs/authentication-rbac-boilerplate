@@ -12,8 +12,8 @@ import {
   BadRequestException,
   Logger,
 } from '@nestjs/common';
-import { ParamId } from '../decorators/param-id.decorator';
-import { LogInterceptor } from 'src/interceptors/log.interceptor';
+import { ParamId } from '../../common/decorators/param-id.decorator';
+import { LogInterceptor } from 'src/common/interceptors/log.interceptor';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePatchUserDTO } from './dto/update-patch-user.dto';
 import { UpdatePutUserDTO } from './dto/update-put-user.dto';

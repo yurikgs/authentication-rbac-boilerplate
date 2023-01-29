@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { isThere } from 'src/functions/isThere';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { isThere } from 'src/common/helpers/isThere';
+import { PrismaService } from 'src/database/prisma/prisma.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePatchUserDTO } from './dto/update-patch-user.dto';
 import { UpdatePutUserDTO } from './dto/update-put-user.dto';
