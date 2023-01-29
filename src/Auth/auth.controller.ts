@@ -1,8 +1,8 @@
-import { Body, Controller, Post, Get, Headers } from '@nestjs/common';
+import { Body, Controller, Post, Headers } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common/decorators';
-import { get } from 'http';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
+import { User } from './decorators/user-decorator';
 import { AuthForgetDTO } from './dto/auth-forget.dto';
 import { AuthLoginDTO } from './dto/auth-login.dto';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
@@ -38,9 +38,16 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Post('check-token')
-  async checkToken(@Headers('authorization') authorization: string) {
-    return this.authService.checkToken(
-      authorization ? authorization.split(' ')[1] : '',
-    );
+  async checkToken(
+    @Headers('authorization') authorization: string,
+    @User('id') user,
+  ) {
+    // Cuidado! o password ainda está visível!
+    return {
+      user,
+      token: this.authService.checkToken(
+        authorization ? authorization.split(' ')[1] : '',
+      ),
+    };
   }
 }

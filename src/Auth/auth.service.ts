@@ -21,7 +21,8 @@ export class AuthService {
     return {
       apiToken: this.jwtService.sign(
         {
-          sub: user.id,
+          sub: 'auth',
+          id: user.id,
           name: user.name,
           email: user.email,
         },
@@ -40,7 +41,8 @@ export class AuthService {
         audience: 'users',
         issuer: 'login',
       });
-      return Boolean(data);
+      // return Boolean(data);
+      return data;
     } catch (e) {
       throw new BadRequestException('Token Inválido');
     }
