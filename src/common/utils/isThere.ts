@@ -7,7 +7,7 @@ export function isThere(
   message?: string,
   error?: any,
 ) {
-  if (!message) message = '404: O id consultado não existe no banco de dados';
+  if (!message) message = '404: The searched id does not exist in database';
   if (entity) {
     return entity;
   } else {
@@ -17,7 +17,7 @@ export function isThere(
         Logger.error(error);
       }
       throw new NotFoundException(
-        'O id consultado não existe no banco de dados',
+        '404: The searched id does not exist in database',
       );
     } else {
       return false;

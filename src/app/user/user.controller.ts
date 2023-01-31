@@ -18,12 +18,17 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePatchUserDTO } from './dto/update-patch-user.dto';
 import { UpdatePutUserDTO } from './dto/update-put-user.dto';
 import { UserService } from './user.service';
+import { ValidateBody } from 'src/common/decorators/validate-body.decorator';
+import { ValidateBodyInterceptor } from 'src/common/interceptors/validate-body.interceptor';
 
 // @UseInterceptors(LogInterceptor)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Post()
+  // Trying to find a way to validate
+  // @ValidateBody(CreateUserDTO)
+  // @UseInterceptors(ValidateBodyInterceptor)
   async create(@Body() data: CreateUserDTO) {
     return this.userService.store(data);
   }

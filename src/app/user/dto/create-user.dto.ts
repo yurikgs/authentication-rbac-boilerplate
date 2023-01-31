@@ -26,3 +26,5 @@ export class CreateUserDTO {
   @IsDateString()
   birthAt: string | Date;
 }
+
+console.log(Object.keys(CreateUserDTO.prototype));
