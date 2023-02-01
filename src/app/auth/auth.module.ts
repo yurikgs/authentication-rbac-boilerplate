@@ -5,12 +5,17 @@ import { UserModule } from 'src/app/user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { forwardRef } from '@nestjs/common/utils';
+import { ConfigModule } from '@nestjs/config';
+import { env } from 'process';
 
 @Module({
   imports: [
-    JwtModule.register({ secret: `iyotGGAIiN5Js.MOfq;C9bwYi5TTjWGr` }),
+    JwtModule.register({ secret: env.JWT_SECRET }),
     forwardRef(() => UserModule),
     PrismaModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService],
