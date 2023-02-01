@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { UserService } from 'src/app/user/user.service';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../app/auth/auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -16,6 +16,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       const data = this.authService.checkToken(token);
+      // console.log(data);
       request.tokenPayload = data;
       request.user = await this.userService.show(data.id);
       return true;

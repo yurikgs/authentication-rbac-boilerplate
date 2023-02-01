@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   BadRequestException,
   Logger,
+  UseGuards,
 } from '@nestjs/common';
 import { ParamId } from '../../common/decorators/param-id.decorator';
 import { LogInterceptor } from 'src/common/interceptors/log.interceptor';
@@ -20,8 +21,15 @@ import { UpdatePutUserDTO } from './dto/update-put-user.dto';
 import { UserService } from './user.service';
 import { ValidateBody } from 'src/common/decorators/validate-body.decorator';
 import { ValidateBodyInterceptor } from 'src/common/interceptors/validate-body.interceptor';
+import { SetAccessRoles } from 'src/common/decorators/set-access-roles.decorator';
+import { Role } from 'src/common/enums/role.enum';
+import { RoleGuard } from 'src/common/guards/role.guard';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { validateRole } from '../../common/utils/validate-role';
 
 // @UseInterceptors(LogInterceptor)
+@SetAccessRoles(Role.Admin)
+@UseGuards(AuthGuard, RoleGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
