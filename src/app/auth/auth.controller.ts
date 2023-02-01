@@ -8,7 +8,12 @@ import { AuthLoginDTO } from './dto/auth-login.dto';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
 import { AuthResetDTO } from './dto/auth-reset.dto';
 import { AuthGuard } from '../../common/guards/auth.guard';
+import { ThrottlerGuard } from '@nestjs/throttler/dist/throttler.guard';
+import { Throttle } from '@nestjs/throttler/dist/throttler.decorator';
+import { THROTTLE_AUTH_LIMIT, THROTTLE_AUTH_TTL } from 'src/common/constants';
 
+@UseGuards(ThrottlerGuard)
+@Throttle(THROTTLE_AUTH_LIMIT, THROTTLE_AUTH_TTL)
 @Controller('auth')
 export class AuthController {
   constructor(
