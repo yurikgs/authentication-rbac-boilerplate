@@ -3,7 +3,8 @@
  * Primarily, verifies if a generic entity exists, returning an id-based mnessage. But it can be set to verify any existence with proper custom messages.
  */
 
-import { HttpException, Logger, NotFoundException } from '@nestjs/common';
+import { HttpException, Logger } from '@nestjs/common';
+import { ExceptionMessagesDict } from '../dicts/exception-messages.dict';
 
 export function isThere(
   entity: any,
@@ -13,7 +14,7 @@ export function isThere(
   error?: { message?: string; statusCode?: string },
 ) {
   if (!message) {
-    message = '404: The searched id does not exist in database';
+    message = ExceptionMessagesDict.INVALID_ID_404;
   }
   if (entity) {
     return entity;

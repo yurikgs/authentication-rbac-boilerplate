@@ -1,4 +1,8 @@
-import { BadRequestException, ExecutionContext } from '@nestjs/common';
+/**
+ * @deprecated
+ * Decorator em desuso, essa aplicação está usando a featrure 'whitelist' do class-validator
+ */
+
 import {
   applyDecorators,
   SetMetadata,
@@ -9,7 +13,6 @@ import { ValidateBodyInterceptor } from '../interceptors/validate-body.intercept
 // O Nestjs não fornee uma função nativa para criar decorators 'pre´route handlers', como os request mapping deorators. A saída para fazer uma validação de dados do body, acessando o contexto de execução, é um interceptor. Aqui apenas setamos a classe que será recuperada nos metadados pelo interceptor e deixamos também a sintaxe ded implementaçã mais 'enxuta'.
 
 export const ValidateBody = (bodyDto: any) => {
-  console.log('decorator');
   return applyDecorators(
     SetMetadata('dto-class-name', bodyDto),
     UseInterceptors(ValidateBodyInterceptor),

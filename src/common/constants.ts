@@ -4,3 +4,4 @@ export const THROTTLE_TTL = 30;
 export const THROTTLE_LIMIT = 90;
 export const THROTTLE_AUTH_TTL = 10;
 export const THROTTLE_AUTH_LIMIT = 20;
+export const LOGGER_CONTEXT_USER_SERVICE = 'UserService';

@@ -1,8 +1,9 @@
-import {
-  createParamDecorator,
-  ExecutionContext,
-  ParseIntPipe,
-} from '@nestjs/common';
+/**
+ * @deprecated
+ * Esse Decorator foi apenas uma prova de conceito
+ */
+
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 export const ParamId = createParamDecorator(
   (_data: unknown, context: ExecutionContext) => {

@@ -6,6 +6,8 @@ import { UpdatePatchUserDTO } from './dto/update-patch-user.dto';
 import { UpdatePutUserDTO } from './dto/update-put-user.dto';
 import * as bcrypt from 'bcrypt';
 import { validateRole } from 'src/common/utils/validate-role';
+import { ExceptionMessagesDict } from 'src/common/dicts/exception-messages.dict';
+import { LOGGER_CONTEXT_USER_SERVICE } from 'src/common/constants';
 
 @Injectable()
 export class UserService {
@@ -23,9 +25,15 @@ export class UserService {
       delete user.password;
       return user;
     } else {
-      return isThere(false, 'UserService', true, `Invalid/ duplicated Email`, {
-        statusCode: '400',
-      });
+      return isThere(
+        false,
+        LOGGER_CONTEXT_USER_SERVICE,
+        true,
+        ExceptionMessagesDict.DUPLICATED_EMAIL,
+        {
+          statusCode: '400',
+        },
+      );
     }
   }
 
@@ -34,7 +42,6 @@ export class UserService {
     // criar um utilitário, type safe
     users.forEach((user) => {
       delete user.password;
-      console.log('oi');
     });
     return users;
   }
@@ -44,14 +51,14 @@ export class UserService {
         id,
       },
     });
-    user = isThere(user, 'UserService');
-    console.log(user);
+    user = isThere(user, LOGGER_CONTEXT_USER_SERVICE);
     delete user.password;
     return user;
   }
 
   async updatePut(id: number, data: UpdatePutUserDTO) {
     data.birthAt ? (data.birthAt = new Date(data.birthAt)) : null;
+    data = validateRole(data);
     if (await this.VerifyUser(id)) {
       const user = await this.dbService.user.update({
         data,
@@ -62,11 +69,12 @@ export class UserService {
       delete user.password;
       return user;
     } else {
-      return isThere(false, 'UserService');
+      return isThere(false, LOGGER_CONTEXT_USER_SERVICE);
     }
   }
   async updatePatch(id: number, data: UpdatePatchUserDTO) {
     data.birthAt ? (data.birthAt = new Date(data.birthAt)) : null;
+    data = validateRole(data);
     if (await this.VerifyUser(id)) {
       const user = await this.dbService.user.update({
         data,
@@ -77,7 +85,7 @@ export class UserService {
       delete user.password;
       return user;
     } else {
-      return isThere(false, 'UserService');
+      return isThere(false, LOGGER_CONTEXT_USER_SERVICE);
     }
   }
   async destroy(id: number) {
@@ -91,7 +99,7 @@ export class UserService {
         message: `User ${id} deleted with success`,
       };
     } else {
-      return isThere(false, 'UserService');
+      return isThere(false, LOGGER_CONTEXT_USER_SERVICE);
     }
   }
 

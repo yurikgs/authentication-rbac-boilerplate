@@ -8,13 +8,12 @@ import {
   IsDateString,
   IsOptional,
   IsAlphanumeric,
-  validate,
   IsEnum,
   IsNumberString,
 } from 'class-validator';
-import { Role } from 'src/common/enums/role.enum';
+import { Role } from '../../enums/role.enum';
 
-export class CreateUserDTO {
+export class TestCreateUserDTO {
   @ApiProperty({
     description: 'User Name',
   })

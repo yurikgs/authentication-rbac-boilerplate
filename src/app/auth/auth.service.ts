@@ -9,6 +9,7 @@ import { PrismaService } from 'src/database/prisma/prisma.service';
 import { UserService } from 'src/app/user/user.service';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
 import * as bcrypt from 'bcrypt';
+import { ExceptionMessagesDict } from 'src/common/dicts/exception-messages.dict';
 
 @Injectable()
 export class AuthService {
@@ -62,11 +63,15 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException(`O email ou a senha estão incorretos`);
+      throw new UnauthorizedException(
+        ExceptionMessagesDict.AUTHENTICATION_FAIL,
+      );
     }
 
     if (!(await bcrypt.compare(password, user.password))) {
-      throw new UnauthorizedException(`O email ou a senha estão incorretos`);
+      throw new UnauthorizedException(
+        ExceptionMessagesDict.AUTHENTICATION_FAIL,
+      );
     }
 
     return this.generateToken(user);
@@ -80,7 +85,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException(`O email está incorreto`);
+      throw new UnauthorizedException(ExceptionMessagesDict.NOT_FOUND_MAIL);
     }
 
     // TO DO: Enviar o email

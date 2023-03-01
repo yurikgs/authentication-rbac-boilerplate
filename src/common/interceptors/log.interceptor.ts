@@ -1,3 +1,8 @@
+/**
+ * @deprecated
+ * Esse Interceptor foi apenas uma prova de conceito
+ */
+
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { Observable, tap } from 'rxjs';
 

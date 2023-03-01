@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common/interfaces';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
-import { CreateUserDTO } from 'src/app/user/dto/create-user.dto';
 
 @Injectable()
 export class ValidateBodyInterceptor implements NestInterceptor {
@@ -16,7 +15,6 @@ export class ValidateBodyInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> {
-    console.log('intrerceptor');
     const bodyDto = this.reflector.get('dto-class-name', context.getHandler());
     const bodyDtoObject = new bodyDto();
     const body = context.switchToHttp().getRequest().body;
