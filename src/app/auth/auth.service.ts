@@ -10,6 +10,9 @@ import { UserService } from 'src/app/user/user.service';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
 import * as bcrypt from 'bcrypt';
 import { ExceptionMessagesDict } from 'src/common/dicts/exception-messages.dict';
+import { join } from 'path';
+import { imageMimeToExtension } from 'src/utils/mimetypes-to-extensions';
+import { FileService } from 'src/file/file.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +20,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly dbService: PrismaService,
     private readonly userService: UserService,
+    private readonly fileService: FileService,
   ) {}
 
   generateToken(user: User) {
@@ -108,5 +112,25 @@ export class AuthService {
     });
 
     return this.generateToken(user);
+  }
+
+  async uploadProfilePic(user, photo: Express.Multer.File) {
+    // write util to detect and veirfy image mimetypes returning corresponding extensions
+    const extension = imageMimeToExtension(photo.mimetype);
+    const result = await this.fileService.uploadFile(
+      join(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        '..',
+        'storage',
+        'photos',
+        `profile-pic-${user.id}.${extension}`,
+      ),
+      photo,
+    );
+
+    return { result };
   }
 }

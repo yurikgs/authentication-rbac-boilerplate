@@ -1,5 +1,9 @@
 import { Body, Controller, Post, Headers } from '@nestjs/common';
-import { UseGuards } from '@nestjs/common/decorators';
+import {
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common/decorators';
 import { UserService } from 'src/app/user/user.service';
 import { AuthService } from './auth.service';
 import { User } from '../../common/decorators/user-decorator';
@@ -16,7 +20,8 @@ import { MethodDocConfig } from 'nestjs-swagger-config/src/method-main-generator
 import { statusConfigPatternsDict } from 'nestjs-swagger-config/src/responses-generator/dicts/status-config-patterns-dict';
 import { OperationsDefaultResponses } from 'nestjs-swagger-config/src/responses-generator/decorators/operations-default-responses';
 import { authRegisterDocConfig } from 'src/swagger-config/objects/main/auth-register-doc-config';
-
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileService } from 'src/file/file.service';
 @ApiTags('Auth')
 @UseGuards(ThrottlerGuard)
 @Throttle(THROTTLE_AUTH_LIMIT, THROTTLE_AUTH_TTL)
@@ -51,7 +56,7 @@ export class AuthController {
     return this.authService.reset(password, token);
   }
 
-  // TODO: Ignore this method??
+  // TODO: Ignore this method?? (Test only method. AuthGuard uses directly the Auth Service counterpart)
   @OperationsDefaultResponses(statusConfigPatternsDict.standardPost)
   @UseGuards(AuthGuard)
   @Post('check-token')
@@ -65,5 +70,16 @@ export class AuthController {
         authorization ? authorization.split(' ')[1] : '',
       ),
     };
+  }
+
+  @OperationsDefaultResponses(statusConfigPatternsDict.standardPost)
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('photo'))
+  @Post('photo')
+  async uploadProfilePic(
+    @User() user,
+    @UploadedFile() photo: Express.Multer.File,
+  ) {
+    return this.authService.uploadProfilePic(user, photo);
   }
 }

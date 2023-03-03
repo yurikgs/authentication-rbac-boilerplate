@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { forwardRef } from '@nestjs/common/utils';
 import { ConfigModule } from '@nestjs/config';
 import { env } from 'process';
+import { FileModule } from 'src/file/file.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { env } from 'process';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    FileModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],
