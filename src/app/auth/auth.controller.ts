@@ -21,7 +21,7 @@ import { statusConfigPatternsDict } from 'nestjs-swagger-config/src/responses-ge
 import { OperationsDefaultResponses } from 'nestjs-swagger-config/src/responses-generator/decorators/operations-default-responses';
 import { authRegisterDocConfig } from 'src/swagger-config/objects/main/auth-register-doc-config';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileService } from 'src/file/file.service';
+
 @ApiTags('Auth')
 @UseGuards(ThrottlerGuard)
 @Throttle(THROTTLE_AUTH_LIMIT, THROTTLE_AUTH_TTL)

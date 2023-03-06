@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Sender</title>
+    <link rel="stylesheet" href="./file-sender.css">
+</head>
+
+<body>
+    <main>
+
+        <section>
+            <div class="form-banner">
+                SINGLE FILE SENDER
+            </div>
+            <form action="http://localhost:3000/file/uploadSome" method="POST" enctype="multipart/form-data">
+                <div class="wrapper">
+                    <label for="singleFile"> Single File Sender </label>
+                    <input type="file" name="singleFile" id="singleFile">
+                </div>
+                <button type="submit">
+                    SUBMIT
+                </button>
+            </form>
+
+            <div class="form-banner">
+                MULTI FILE SENDER
+            </div>
+            <form action="http://localhost:3000/file/uploadMultiple" method="post" enctype="multipart/form-data">
+                <div class="wrapper" multiple>
+                    <label for="multipleFiles"> Multi File Sender </label>
+                    <input type="file" name="multipleFiles" id="multiple-file-single-field-form" multiple>
+                </div>
+                <button type="submit">
+                    SUBMIT
+                </button>
+            </form>
+
+            <div class="form-banner">
+                MULTI FILE SENDER - MULTIPLE FIELDS
+            </div>
+            <form action="http://localhost:3000/file/uploadMultipleFromManyFields" method="post" enctype="multipart/form-data">
+                <div class="wrapper">
+                    <label for="singleFile"> Single File Sender </label>
+                    <input type="file" name="singleFile" id="singleFile">
+                </div>
+                <div class="wrapper" multiple>
+                    <label for="multipleFiles"> Multi File Sender </label>
+                    <input type="file" name="multipleFiles" id="multiple-file-multiple-fields-form" multiple>
+                </div>
+                <button type="submit">
+                    SUBMIT
+                </button>
+            </form>
+
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>
