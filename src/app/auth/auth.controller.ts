@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Headers } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Headers,
+  ParseFilePipe,
+  FileTypeValidator,
+  MaxFileSizeValidator,
+} from '@nestjs/common';
 import {
   UploadedFile,
   UseGuards,
@@ -78,7 +86,15 @@ export class AuthController {
   @Post('photo')
   async uploadProfilePic(
     @User() user,
-    @UploadedFile() photo: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: /^image\/(png|jpe?g)$/i }),
+          new MaxFileSizeValidator({ maxSize: 50 * 1024 }),
+        ],
+      }),
+    )
+    photo: Express.Multer.File,
   ) {
     return this.authService.uploadProfilePic(user, photo);
   }

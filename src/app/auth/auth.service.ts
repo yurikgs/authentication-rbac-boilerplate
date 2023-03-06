@@ -13,6 +13,7 @@ import { ExceptionMessagesDict } from 'src/common/dicts/exception-messages.dict'
 import { join } from 'path';
 import { imageMimeToExtension } from 'src/utils/mimetypes-to-extensions';
 import { FileService } from 'src/file/file.service';
+import { FileTypeValidator, ParseFilePipe } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
