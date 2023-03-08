@@ -1,0 +1,16 @@
+html
+  head
+    title Password Recovery Email
+  body
+    h1 Password Recovery Email
+    p Hi #{name}, 
+      br
+      br
+      We received a request to reset your password. Please click on the link below to proceed: #{link}
+      br
+      a(href="#{link}") Reset Password
+      br
+      If you did not make this request, you can safely ignore this email.
+    p Best regards,
+      br
+      The Password Recovery Team

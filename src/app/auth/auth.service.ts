@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt';
-import { Prisma, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma/prisma.service';
 import { UserService } from 'src/app/user/user.service';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
@@ -13,7 +13,7 @@ import { ExceptionMessagesDict } from 'src/common/dicts/exception-messages.dict'
 import { join } from 'path';
 import { imageMimeToExtension } from 'src/utils/mimetypes-to-extensions';
 import { FileService } from 'src/file/file.service';
-import { FileTypeValidator, ParseFilePipe } from '@nestjs/common';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +22,7 @@ export class AuthService {
     private readonly dbService: PrismaService,
     private readonly userService: UserService,
     private readonly fileService: FileService,
+    private readonly mailerService: MailerService,
   ) {}
 
   generateToken(user: User) {
@@ -42,6 +43,24 @@ export class AuthService {
     };
   }
 
+  generateResetToken(user: User) {
+    return {
+      resetToken: this.jwtService.sign(
+        {
+          sub: 'reset',
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
+        {
+          expiresIn: '1 day',
+          issuer: 'authReset',
+          audience: 'users',
+        },
+      ),
+    };
+  }
+
   checkToken(token: string) {
     try {
       const data = this.jwtService.verify(token, {
@@ -54,6 +73,19 @@ export class AuthService {
       throw new BadRequestException('Token Inválido');
     }
   }
+
+  checkResetToken(token: string) {
+    try {
+      const data = this.jwtService.verify(token, {
+        audience: 'users',
+        issuer: 'authReset',
+      });
+      return data;
+    } catch (e) {
+      throw new BadRequestException('Token Inválido');
+    }
+  }
+
   async register(data: AuthRegisterDTO) {
     const user = await this.userService.store(data);
 
@@ -92,31 +124,61 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException(ExceptionMessagesDict.NOT_FOUND_MAIL);
     }
+    const token = this.generateResetToken(user).resetToken;
+    const link = `http://somedomainname.com/auth-reset/${token}`;
 
-    // TO DO: Enviar o email
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Password Recovery Request',
+        template: 'auth-forget',
+        context: {
+          name: user.name,
+          link,
+        },
+      });
+    } catch (e) {
+      throw new BadRequestException(`Couldnt send mail. Error: ${e}`);
+    }
 
-    return user;
+    return {
+      warning:
+        'Test response version. Do not return token or any data, just send token by bemail and return a success confirm response',
+      resetToken: token,
+    };
   }
 
   async reset(password: string, token: string) {
-    // TO DO: Validar o Token
+    let user;
+    try {
+      const tokenPayload = this.checkResetToken(token);
+      const id = tokenPayload.id;
+      if (isNaN(Number(id))) {
+        throw new BadRequestException('Token Inválido');
+      }
+      const salt = await bcrypt.genSalt();
+      password = await bcrypt.hash(password, salt);
+      user = await this.dbService.user.update({
+        where: {
+          id,
+        },
+        data: {
+          password,
+        },
+      });
+    } catch (e) {
+      throw new BadRequestException(`Error: ${e}`);
+    }
 
-    // mock de extração de id proveniente do token:
-    const id = 8;
-    const user = await this.dbService.user.update({
-      where: {
-        id,
-      },
-      data: {
-        password,
-      },
-    });
-
-    return this.generateToken(user);
+    return {
+      warning:
+        'Test response version. You just need to return access token in final version, never return user password like this bellow this',
+      user,
+      apiToken: this.generateToken(user),
+    };
   }
 
   async uploadProfilePic(user, photo: Express.Multer.File) {
-    // write util to detect and veirfy image mimetypes returning corresponding extensions
     const extension = imageMimeToExtension(photo.mimetype);
     const result = await this.fileService.uploadFile(
       join(
