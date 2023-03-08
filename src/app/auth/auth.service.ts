@@ -11,9 +11,10 @@ import { AuthRegisterDTO } from './dto/auth-register.dto';
 import * as bcrypt from 'bcrypt';
 import { ExceptionMessagesDict } from 'src/common/dicts/exception-messages.dict';
 import { join } from 'path';
-import { imageMimeToExtension } from 'src/utils/mimetypes-to-extensions';
+
 import { FileService } from 'src/file/file.service';
 import { MailerService } from '@nestjs-modules/mailer';
+import { imageMimeToExtension } from 'src/common/utils/mimetypes-to-extensions';
 
 @Injectable()
 export class AuthService {
